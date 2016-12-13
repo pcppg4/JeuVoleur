@@ -4,8 +4,3 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += main.cpp
-
-HEADERS += \
-    jeu.hpp
-
-LIBS += -static
