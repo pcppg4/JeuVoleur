@@ -14,6 +14,21 @@ const string KBleu    ("34");
 const string KMAgenta ("35");
 const string KCyan    ("36");
 
+typedef vector <char> CVLine; // un type représentant une ligne de la grille
+typedef vector <CVLine> CMatrix; // un type représentant la grille
+typedef pair   <unsigned, unsigned> CPosition; // un type représentant une coordonnée dans la grille
+/*const char KTokenPlayer1 = 'X';
+const char KTokenPlayer2 = 'O';
+const char KEmpty        = '-';*/
+typedef struct {
+    unsigned posX;
+    unsigned posY;
+    unsigned sizeX (1);
+    unsigned sizeY (1);
+    char token;
+    string color;
+} Player;
+
 void Couleur (const string & coul)
 {
     cout << "\033[" << coul <<"m";
@@ -23,13 +38,6 @@ void ClearScreen ()
 {
     cout << "\033[H\033[2J";
 }
-
-typedef vector <char> CVLine; // un type représentant une ligne de la grille
-typedef vector <CVLine> CMatrix; // un type représentant la grille
-typedef pair   <unsigned, unsigned> CPosition; // un type représentant une coordonnée dans la grille
-const char KTokenPlayer1 = 'X';
-const char KTokenPlayer2 = 'O';
-const char KEmpty        = '-';
 
 void ShowMatrix (const CMatrix & Mat)
 {
@@ -48,7 +56,7 @@ void ShowMatrix (const CMatrix & Mat)
     }
 }
 
-void InitMat (CMatrix & Mat, unsigned NbLine, unsigned NbColumn, CPosition & PosPlayer1, CPosition & PosPlayer2){
+void InitMat (CMatrix & Mat, unsigned NbLine, unsigned NbColumn, Player & player1, Player & player2){
     Mat.resize(NbLine);
     for (unsigned i (0); i<NbLine; ++i)
     {
@@ -57,46 +65,46 @@ void InitMat (CMatrix & Mat, unsigned NbLine, unsigned NbColumn, CPosition & Pos
             Mat[i].push_back(KEmpty);
         }
     }
-    Mat[PosPlayer1.second][PosPlayer1.first] = KTokenPlayer1;
-    Mat[PosPlayer2.second][PosPlayer2.first] = KTokenPlayer2;
+    Mat[player1.posY][player1.posX] = player1.token;
+    Mat[player2.posY][player2.posX] = player2.token;
 }
 
-void MoveToken (CMatrix & Mat, char Move, CPosition & Pos)
+void MoveToken (CMatrix & Mat, char Move, Player player)
 {
     switch (Move)
     {
     case 'z':
-        if (Pos.second > 0)
+        if (player.posY > 0)
         {
-        Mat[Pos.second-1][Pos.first] = Mat[Pos.second][Pos.first];
-        Mat[Pos.second][Pos.first] = KEmpty;
-        Pos.second = Pos.second - 1;
+        Mat[player.posY-1][player.posX] = Mat[player.posY][player.posX];
+        Mat[player.posY][player.posX] = KEmpty;
+        player.posY = player.posY - 1;
         }
     break;
     case 's':
-        if (Pos.second < Mat.size()-1)
+        if (player.posY < Mat.size()-1)
         {
-        Mat[Pos.second+1][Pos.first] = Mat[Pos.second][Pos.first];
-        Mat[Pos.second][Pos.first] = KEmpty;
-        Pos.second = Pos.second + 1;
+        Mat[player.posY+1][player.posX] = Mat[player.posY][player.posX];
+        Mat[player.posY][player.posX] = KEmpty;
+        player.posY = player.posY + 1;
 
         }
     break;
     case 'q':
-        if (Pos.first > 0)
+        if (player.posX > 0)
         {
-        Mat[Pos.second][Pos.first-1] = Mat[Pos.second][Pos.first];
-        Mat[Pos.second][Pos.first] = KEmpty;
-        Pos.first = Pos.first - 1;
+        Mat[player.posY][player.posX-1] = Mat[player.posY][player.posX];
+        Mat[player.posY][player.posX] = KEmpty;
+        player.posX = player.posX - 1;
 
         }
     break;
     case 'd':
-        if (Pos.first < Mat[0].size()-1)
+        if (player.posX < Mat[0].size()-1)
         {
-        Mat[Pos.second][Pos.first+1] = Mat[Pos.second][Pos.first];
-        Mat[Pos.second][Pos.first] = KEmpty;
-        Pos.first = Pos.first + 1;
+        Mat[player.posY][player.posX+1] = Mat[player.posY][player.posX];
+        Mat[player.posY][player.posX] = KEmpty;
+        player.posX = player.posX + 1;
         }
     break;
     }
@@ -106,12 +114,20 @@ int ppal ()
 {
     const unsigned KSizeX (5);
     const unsigned KSizeY (5);
+    Player P1, P2;
+    P1.posX = 0;
+    P1.posY = 0;
+    P2.posX = KSizeX-1;
+    P2.posY = KSizeY-1;
+    P1.token = 'X';
+    P2.token = 'O';
+    P1.color = KRouge;
+    P2.color = KBleu;
+
     unsigned NbRnds;
     CPosition pos1, pos2;
     pos1.first = 0;
     pos1.second = 0;
-    pos2.first = KSizeX-1;
-    pos2.second = KSizeY-1;
     cout << "Entrez le nombre de rounds" << endl;
     cin >> NbRnds;
     char Mv;
