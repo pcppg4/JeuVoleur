@@ -5,6 +5,11 @@ using namespace std;
 
 namespace {
 
+
+typedef vector <char> CVLine;  
+typedef vector <CVLine> CMatrix;  
+typedef pair   <unsigned, unsigned> CPosition; 
+
 const string KReset   ("0");
 const string KNoir    ("30");
 const string KRouge   ("31");
@@ -13,6 +18,10 @@ const string KJaune   ("33");
 const string KBleu    ("34");
 const string KMAgenta ("35");
 const string KCyan    ("36");
+
+const char KTokenPlayer1 = 'X';
+const char KTokenPlayer2 = 'O';
+const char KEmpty        = '-';
 
 void Couleur (const string & coul)
 {
@@ -24,12 +33,7 @@ void ClearScreen ()
     cout << "\033[H\033[2J";
 }
 
-typedef vector <char> CVLine; // un type représentant une ligne de la grille
-typedef vector <CVLine> CMatrix; // un type représentant la grille
-typedef pair   <unsigned, unsigned> CPosition; // un type représentant une coordonnée dans la grille
-const char KTokenPlayer1 = 'X';
-const char KTokenPlayer2 = 'O';
-const char KEmpty        = '-';
+
 
 void ShowMatrix (const CMatrix & Mat)
 {
@@ -106,7 +110,8 @@ int intAlea(const int min, const int max){
     return min + (rand() % (int)(max - min + 1));
 
 }
-void creeObstacle(CMatrix & Matrice, const char & symboleObstacle){
+void creeObstacle(CMatrix & Matrice, const char & symboleObstacle, ){
+    
 
 
 }
