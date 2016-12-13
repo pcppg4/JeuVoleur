@@ -8,3 +8,5 @@ int main()
     ppal ();
     return 0;
 }
+ttt
+toe
