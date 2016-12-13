@@ -102,10 +102,19 @@ void MoveToken (CMatrix & Mat, char Move, CPosition & Pos)
     }
 }
 
+int intAlea(const int min, const int max){
+    return min + (rand() % (int)(max - min + 1));
+
+}
+void creeObstacle(CMatrix & Matrice, const char & symboleObstacle){
+
+
+}
+
 int ppal ()
 {
-    const unsigned KSizeX (5);
-    const unsigned KSizeY (5);
+    const unsigned KSizeX (10);
+    const unsigned KSizeY (10);
     unsigned NbRnds;
     CPosition pos1, pos2;
     pos1.first = 0;
@@ -143,6 +152,3 @@ int main()
     ppal ();
     return 0;
 }
-ttt
-toe
-xxx
