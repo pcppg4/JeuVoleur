@@ -22,6 +22,7 @@ const string KCyan    ("36");
 const char KTokenPlayer1 = 'X';
 const char KTokenPlayer2 = 'O';
 const char KEmpty        = '-';
+const char KObstacle     = '#';
 
 void Couleur (const string & coul)
 {
@@ -32,8 +33,6 @@ void ClearScreen ()
 {
     cout << "\033[H\033[2J";
 }
-
-
 
 void ShowMatrix (const CMatrix & Mat)
 {
@@ -110,10 +109,13 @@ int intAlea(const int min, const int max){
     return min + (rand() % (int)(max - min + 1));
 
 }
-void creeObstacle(CMatrix & Matrice, const char & symboleObstacle, ){
+
+bool isHittingObstacle(CMatrix & Matrice, const CPosition Position1){
     
+}
 
-
+void creeObstacle(CMatrix & Matrice, const char & symboleObstacle, const CPosition & Position ){
+    Matrice[Position.second][Position.first] = symboleObstacle;
 }
 
 int ppal ()
