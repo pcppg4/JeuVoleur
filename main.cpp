@@ -95,10 +95,10 @@ void MoveToken (CMatrix & Mat, char Move, Player & player)
             for (unsigned i (player.posX); i < player.posX + player.sizeX; ++i)
                 Mat[player.posY][i] = player.token;
         }
-    break;
+        break;
     case 's':
         if (player.posY + player.sizeY < Mat.size())
-        {            
+        {
             player.posY = player.posY + 1;
             GetBonus(Mat, player);
             for (unsigned i (player.posX); i < player.posX + player.sizeX; ++i)
@@ -107,7 +107,7 @@ void MoveToken (CMatrix & Mat, char Move, Player & player)
                 Mat[player.posY + player.sizeY - 1][i] = player.token;
 
         }
-    break;
+        break;
     case 'q':
         if (player.posX > 0)
         {
@@ -118,7 +118,7 @@ void MoveToken (CMatrix & Mat, char Move, Player & player)
             for (unsigned i (player.posY); i < player.posY + player.sizeY; ++i)
                 Mat[i][player.posX] = player.token;
         }
-    break;
+        break;
     case 'd':
         if (player.posX + player.sizeX < Mat[0].size())
         {
@@ -129,7 +129,7 @@ void MoveToken (CMatrix & Mat, char Move, Player & player)
             for (unsigned i (player.posY); i < player.posY + player.sizeY; ++i)
                 Mat[i][player.posX + player.sizeX - 1] = player.token;
         }
-    break;
+        break;
     }
 }
 
@@ -159,9 +159,9 @@ void GetBonus(CMatrix & Mat, Player & player)
 bool CheckIfWin(Player & FirstPlayer, Player & SecondPlayer)
 {
     return !((FirstPlayer.posX > SecondPlayer.posX + SecondPlayer.sizeX - 1) ||
-            (FirstPlayer.posX + FirstPlayer.sizeX - 1 < SecondPlayer.posX) ||
-            (SecondPlayer.posY > FirstPlayer.posY + FirstPlayer.sizeY - 1)  ||
-            (SecondPlayer.posY + SecondPlayer.sizeY - 1 < FirstPlayer.posY));
+             (FirstPlayer.posX + FirstPlayer.sizeX - 1 < SecondPlayer.posX) ||
+             (SecondPlayer.posY > FirstPlayer.posY + FirstPlayer.sizeY - 1)  ||
+             (SecondPlayer.posY + SecondPlayer.sizeY - 1 < FirstPlayer.posY));
 }
 void SetPlayerSize( Player & player, const unsigned & largeur, const unsigned & hauteur){
     player.sizeX = largeur;
@@ -188,7 +188,7 @@ unsigned AskTourMax(){
     return NbRnds;
 }
 
- 
+
 
 char GetWinner(Player& FirstPlayer, Player &SecondPlayer, const unsigned & NbrTour){
     return (NbrTour%2 == 0 ? FirstPlayer.token : SecondPlayer.token);
