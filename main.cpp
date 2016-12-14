@@ -16,6 +16,7 @@ const char KEmpty = '-';
 
 typedef vector <char> CVLine; // un type représentant une ligne de la grille
 typedef vector <CVLine> CMatrix; // un type représentant la grille
+
 typedef struct {
     unsigned posX;
     unsigned posY;
@@ -24,6 +25,15 @@ typedef struct {
     char token;
     string color;
 } Player;
+
+typedef struct {
+    unsigned posX;
+    unsigned posY;
+    unsigned sizeX;
+    unsigned sizeY;
+    char token;
+    string color;
+} Obstacle;
 
 void Couleur (const string & coul);
 void ClearScreen ();
@@ -163,22 +173,29 @@ bool CheckIfWin(Player & FirstPlayer, Player & SecondPlayer)
              (SecondPlayer.posY > FirstPlayer.posY + FirstPlayer.sizeY - 1)  ||
              (SecondPlayer.posY + SecondPlayer.sizeY - 1 < FirstPlayer.posY));
 }
-void SetPlayerSize( Player & player, const unsigned & largeur, const unsigned & hauteur){
+
+void InitPlayer(Player & player, const unsigned & largeur, const unsigned & hauteur,const unsigned & AxeX, const unsigned & AxeY, const char & Token,  const string & Color){
+    
     player.sizeX = largeur;
     player.sizeY = hauteur;
-}
-
-void SetPlayerPosition(Player & player, const unsigned & AxeX, const unsigned & AxeY){
     player.posX = AxeX;
     player.posY = AxeY;
-}
-
-void SetPlayerToken(Player & player, const char & Token){
     player.token = Token;
+    player.color = Color;
+
+
 }
 
-void SetPlayerColor(Player & player, const string & Color){
-    player.color = Color;
+void InitObstacle(Obstacle & obstacle, const unsigned & largeur, const unsigned & hauteur,const unsigned & AxeX, const unsigned & AxeY, const char & Token,  const string & Color){
+    
+    obstacle.sizeX = largeur;
+    obstacle.sizeY = hauteur;
+    obstacle.posX = AxeX;
+    obstacle.posY = AxeY;
+    obstacle.token = Token;
+    obstacle.color = Color;
+
+
 }
 
 unsigned AskTourMax(){
@@ -188,43 +205,37 @@ unsigned AskTourMax(){
     return NbRnds;
 }
 
-
-
 char GetWinner(Player& FirstPlayer, Player &SecondPlayer, const unsigned & NbrTour){
     return (NbrTour%2 == 0 ? FirstPlayer.token : SecondPlayer.token);
 }
 
+
+
 int ppal ()
 {
-
+    // Taille matrice
     const unsigned KSizeX (5);
     const unsigned KSizeY (5);
+
     unsigned NbRnds = AskTourMax();
     char EnteredKey;
-
+    
+    //Joueurs & Matrice
     Player FirstPlayer;
     Player SecondPlayer;
     CMatrix Map;
+    
+    //Création des joueurs
+    InitPlayer(FirstPlayer, 1, 1, 0, 0, 'X', KRouge);
+    InitPlayer(SecondPlayer, 1, 1, KSizeX - 1, KSizeY - 1, 'Y', KBleu);
 
-
-    SetPlayerPosition(FirstPlayer, 0, 0);
-    SetPlayerPosition(SecondPlayer, KSizeX - 1, KSizeY - 1);
-
-    SetPlayerSize(FirstPlayer, 1, 1);
-    SetPlayerSize(SecondPlayer, 1, 1);
-
-    SetPlayerToken(FirstPlayer, 'X');
-    SetPlayerToken(SecondPlayer, 'Y');
-
-    SetPlayerColor(FirstPlayer, KRouge);
-    SetPlayerColor(SecondPlayer, KBleu);
-
-
+    //Création de la matrice
     InitMat(Map, KSizeX, KSizeY, FirstPlayer, SecondPlayer);
-    PutBonus(Map,'B',2,2);
-    ShowMatrix(Map, FirstPlayer, SecondPlayer);
 
-    cout << FirstPlayer.token << " commeeence et chasse " << SecondPlayer.token << endl;
+    //Création des bonus
+    PutBonus(Map,'B',2,2);
+
+    ShowMatrix(Map, FirstPlayer, SecondPlayer);
 
     for (unsigned i (0); i < NbRnds*2; ++i)
     {
@@ -234,7 +245,7 @@ int ppal ()
 
         cin >> EnteredKey;
 
-        MoveToken (Map, EnteredKey, (i%2 == 0 ? FirstPlayer : SecondPlayer) );
+        MoveToken (Map, EnteredKey, (i%2 == 0 ? FirstPlayer : SecondPlayer));
 
         if (CheckIfWin(FirstPlayer, SecondPlayer))
         {
