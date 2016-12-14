@@ -3,12 +3,6 @@
 
 using namespace std;
 
-namespace {
-
-
-typedef vector <char> CVLine;  
-typedef vector <CVLine> CMatrix;  
-typedef pair   <unsigned, unsigned> CPosition; 
 
 const string KReset   ("0");
 const string KNoir    ("30");
@@ -18,11 +12,21 @@ const string KJaune   ("33");
 const string KBleu    ("34");
 const string KMAgenta ("35");
 const string KCyan    ("36");
+const char KEmpty = '-';
 
-const char KTokenPlayer1 = 'X';
-const char KTokenPlayer2 = 'O';
-const char KEmpty        = '-';
-const char KObstacle     = '#';
+typedef vector <char> CVLine; 
+typedef vector <CVLine> CMatrix; 
+typedef pair   <unsigned, unsigned> CPosition; 
+typedef pair   <unsigned, unsigned> CTaille; 
+
+typedef struct {
+
+    CPosition position;
+    CTaille size;
+    char token;
+    string color;
+
+} Player;
 
 void Couleur (const string & coul)
 {
@@ -34,7 +38,7 @@ void ClearScreen ()
     cout << "\033[H\033[2J";
 }
 
-void ShowMatrix (const CMatrix & Mat)
+void ShowMatrix (const CMatrix & Mat,Player & FirstPlayer, Player & SecondPlayer)
 {
     ClearScreen();
     Couleur (KReset);
@@ -42,16 +46,16 @@ void ShowMatrix (const CMatrix & Mat)
     {
         for (char C : line)
         {
-            if (C == KTokenPlayer1) Couleur (KRouge);
-            if (C == KTokenPlayer2) Couleur (KBleu);
+            if (C == FirstPlayer.token) Couleur (FirstPlayer.color);
+            if (C == SecondPlayer.token) Couleur (SecondPlayer.color);
             cout << C;
-            if ((C == KTokenPlayer1)||(C == KTokenPlayer2)) Couleur (KReset);
+            if ((C == FirstPlayer.token)||(C == SecondPlayer.token)) Couleur (KReset);
         }
         cout << endl;
     }
 }
 
-void InitMat (CMatrix & Mat, unsigned NbLine, unsigned NbColumn, CPosition & PosPlayer1, CPosition & PosPlayer2){
+void InitMat (CMatrix & Mat, unsigned NbLine, unsigned NbColumn, Player & FirstPlayer, Player & SecondPlayer){
     Mat.resize(NbLine);
     for (unsigned i (0); i<NbLine; ++i)
     {
@@ -60,91 +64,102 @@ void InitMat (CMatrix & Mat, unsigned NbLine, unsigned NbColumn, CPosition & Pos
             Mat[i].push_back(KEmpty);
         }
     }
-    Mat[PosPlayer1.second][PosPlayer1.first] = KTokenPlayer1;
-    Mat[PosPlayer2.second][PosPlayer2.first] = KTokenPlayer2;
+    Mat[FirstPlayer.position.second][FirstPlayer.position.first] = FirstPlayer.token;
+    Mat[SecondPlayer.position.second][SecondPlayer.position.first] = SecondPlayer.token;
 }
 
-void MoveToken (CMatrix & Mat, char Move, CPosition & Pos)
+void MoveToken (CMatrix & Mat, char Move, Player & player)
 {
     switch (Move)
     {
     case 'z':
-        if (Pos.second > 0)
+        if (player.position.first > 0)
         {
-        Mat[Pos.second-1][Pos.first] = Mat[Pos.second][Pos.first];
-        Mat[Pos.second][Pos.first] = KEmpty;
-        Pos.second = Pos.second - 1;
+        Mat[player.position.first-1][player.position.second] = player.token;
+        Mat[player.position.first][player.position.second] = KEmpty;
+        player.position.first = player.position.first - 1;
         }
     break;
     case 's':
-        if (Pos.second < Mat.size()-1)
+        if (player.position.first < Mat.size()-1)
         {
-        Mat[Pos.second+1][Pos.first] = Mat[Pos.second][Pos.first];
-        Mat[Pos.second][Pos.first] = KEmpty;
-        Pos.second = Pos.second + 1;
+        Mat[player.position.first+1][player.position.second] = player.token;
+        Mat[player.position.first][player.position.second] = KEmpty;
+        player.position.first = player.position.first + 1;
 
         }
     break;
     case 'q':
-        if (Pos.first > 0)
+        if (player.position.second > 0)
         {
-        Mat[Pos.second][Pos.first-1] = Mat[Pos.second][Pos.first];
-        Mat[Pos.second][Pos.first] = KEmpty;
-        Pos.first = Pos.first - 1;
+        Mat[player.position.first][player.position.second-1] = player.token;
+        Mat[player.position.first][player.position.second] = KEmpty;
+        player.position.second = player.position.second - 1;
 
         }
     break;
     case 'd':
-        if (Pos.first < Mat[0].size()-1)
+        if (player.position.second < Mat[0].size()-1)
         {
-        Mat[Pos.second][Pos.first+1] = Mat[Pos.second][Pos.first];
-        Mat[Pos.second][Pos.first] = KEmpty;
-        Pos.first = Pos.first + 1;
+        Mat[player.position.first][player.position.second+1] = player.token;
+        Mat[player.position.first][player.position.second] = KEmpty;
+        player.position.second = player.position.second + 1;
         }
     break;
     }
 }
 
-int intAlea(const int min, const int max){
-    return min + (rand() % (int)(max - min + 1));
-
+void setPlayerPosition(Player & player, const unsigned KSizeX, const unsigned KSizeY) {
+	player.position = make_pair(KSizeX - 1, KSizeY - 1);
 }
 
-bool isHittingObstacle(CMatrix & Matrice, const CPosition Position1){
-    
+void setPlayerSize(Player & player, const unsigned X, const unsigned Y) {
+	player.size = make_pair(X, Y);
 }
 
-void creeObstacle(CMatrix & Matrice, const char & symboleObstacle, const CPosition & Position ){
-    Matrice[Position.second][Position.first] = symboleObstacle;
+void setPlayerToken(Player & player, const char Token) {
+	player.token = Token;
 }
 
+void setPlayerColor(Player & player, const string Color) {
+	player.color = Color;
+}
 int ppal ()
 {
-    const unsigned KSizeX (10);
-    const unsigned KSizeY (10);
+    const unsigned KSizeX (5);
+    const unsigned KSizeY (5);
+    Player FirstPlayer, SecondPlayer;
+ 
+	setPlayerPosition(FirstPlayer, 1, 1);
+	setPlayerPosition(SecondPlayer, KSizeX - 1, KSizeY - 1);
+	 
+	setPlayerSize(FirstPlayer, 1, 1);
+	setPlayerSize(SecondPlayer, 1, 1);
+
+	setPlayerToken(FirstPlayer, 'X');
+	setPlayerToken(SecondPlayer, 'Y');
+	 
+	setPlayerColor(FirstPlayer, KRouge);
+	setPlayerColor(SecondPlayer, KBleu);
+	 
     unsigned NbRnds;
-    CPosition pos1, pos2;
-    pos1.first = 0;
-    pos1.second = 0;
-    pos2.first = KSizeX-1;
-    pos2.second = KSizeY-1;
     cout << "Entrez le nombre de rounds" << endl;
     cin >> NbRnds;
     char Mv;
     CMatrix Map;
-    InitMat(Map,KSizeX,KSizeY,pos1,pos2);
-    ShowMatrix(Map);
-    cout << KTokenPlayer1 << " commence et chasse " << KTokenPlayer2 << endl;
+    InitMat(Map,KSizeX,KSizeY, FirstPlayer, SecondPlayer);
+    ShowMatrix(Map, FirstPlayer, SecondPlayer);
+    cout << FirstPlayer.token << " commence et chasse " << SecondPlayer.token << endl;
     for (unsigned i (0); i < NbRnds*2; ++i)
     {
 
-        ShowMatrix(Map);
-        cout << "Au tour de " << (i%2 == 0 ? KTokenPlayer1 : KTokenPlayer2) << endl;
+        ShowMatrix(Map, FirstPlayer, SecondPlayer);
+        cout << "Au tour de " << (i%2 == 0 ? FirstPlayer.token : SecondPlayer.token) << endl;
         cin >> Mv;
-        MoveToken (Map, Mv, (i%2 == 0 ? pos1 : pos2) );
-        if (pos1 == pos2)
+        MoveToken (Map, Mv, (i%2 == 0 ? FirstPlayer : SecondPlayer) );
+        if ((FirstPlayer.position.second == SecondPlayer.position.second)&&(FirstPlayer.position.first== SecondPlayer.position.first))
         {
-            cout << (i%2 == 0 ? KTokenPlayer1 : KTokenPlayer2) << " a gagne !" << endl;
+            cout << (i%2 == 0 ? FirstPlayer.token : SecondPlayer.token) << " a gagne !" << endl;
             return 0;
         }
     }
@@ -152,7 +167,7 @@ int ppal ()
     return 0;
 }
 
-}
+
 
 int main()
 {
