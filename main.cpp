@@ -17,14 +17,12 @@ const string KCyan    ("36");
 typedef vector <char> CVLine; // un type représentant une ligne de la grille
 typedef vector <CVLine> CMatrix; // un type représentant la grille
 typedef pair   <unsigned, unsigned> CPosition; // un type représentant une coordonnée dans la grille
-/*const char KTokenPlayer1 = 'X';
-const char KTokenPlayer2 = 'O';
-const char KEmpty        = '-';*/
+const char KEmpty = '-';
 typedef struct {
     unsigned posX;
     unsigned posY;
-    unsigned sizeX (1);
-    unsigned sizeY (1);
+    unsigned sizeX;
+    unsigned sizeY;
     char token;
     string color;
 } Player;
@@ -69,14 +67,14 @@ void InitMat (CMatrix & Mat, unsigned NbLine, unsigned NbColumn, Player & player
     Mat[player2.posY][player2.posX] = player2.token;
 }
 
-void MoveToken (CMatrix & Mat, char Move, Player player)
+void MoveToken (CMatrix & Mat, char Move, Player & player)
 {
     switch (Move)
     {
     case 'z':
         if (player.posY > 0)
         {
-        Mat[player.posY-1][player.posX] = Mat[player.posY][player.posX];
+        Mat[player.posY-1][player.posX] = player.token;
         Mat[player.posY][player.posX] = KEmpty;
         player.posY = player.posY - 1;
         }
@@ -84,7 +82,7 @@ void MoveToken (CMatrix & Mat, char Move, Player player)
     case 's':
         if (player.posY < Mat.size()-1)
         {
-        Mat[player.posY+1][player.posX] = Mat[player.posY][player.posX];
+        Mat[player.posY+1][player.posX] = player.token;
         Mat[player.posY][player.posX] = KEmpty;
         player.posY = player.posY + 1;
 
@@ -93,7 +91,7 @@ void MoveToken (CMatrix & Mat, char Move, Player player)
     case 'q':
         if (player.posX > 0)
         {
-        Mat[player.posY][player.posX-1] = Mat[player.posY][player.posX];
+        Mat[player.posY][player.posX-1] = player.token;
         Mat[player.posY][player.posX] = KEmpty;
         player.posX = player.posX - 1;
 
@@ -102,7 +100,7 @@ void MoveToken (CMatrix & Mat, char Move, Player player)
     case 'd':
         if (player.posX < Mat[0].size()-1)
         {
-        Mat[player.posY][player.posX+1] = Mat[player.posY][player.posX];
+        Mat[player.posY][player.posX+1] = player.token;
         Mat[player.posY][player.posX] = KEmpty;
         player.posX = player.posX + 1;
         }
@@ -119,6 +117,10 @@ int ppal ()
     player1.posY = 0;
     player2.posX = KSizeX-1;
     player2.posY = KSizeY-1;
+    player1.sizeX = 1;
+    player1.sizeY = 1;
+    player2.sizeX = 1;
+    player2.sizeY = 1;
     player1.token = 'X';
     player2.token = 'O';
     player1.color = KRouge;
@@ -128,19 +130,19 @@ int ppal ()
     cin >> NbRnds;
     char Mv;
     CMatrix Map;
-    InitMat(Map,KSizeX,KSizeY,pos1,pos2);
-    ShowMatrix(Map);
-    cout << KTokenPlayer1 << " commence et chasse " << KTokenPlayer2 << endl;
+    InitMat(Map,KSizeX,KSizeY,player1,player2);
+    ShowMatrix(Map,player1,player2);
+    cout << player1.token << " commence et chasse " << player2.token << endl;
     for (unsigned i (0); i < NbRnds*2; ++i)
     {
 
-        ShowMatrix(Map);
-        cout << "Au tour de " << (i%2 == 0 ? KTokenPlayer1 : KTokenPlayer2) << endl;
+        ShowMatrix(Map,player1,player2);
+        cout << "Au tour de " << (i%2 == 0 ? player1.token : player2.token) << endl;
         cin >> Mv;
-        MoveToken (Map, Mv, (i%2 == 0 ? pos1 : pos2) );
-        if (pos1 == pos2)
+        MoveToken (Map, Mv, (i%2 == 0 ? player1 : player2) );
+        if ((player1.posX == player2.posX)&&(player1.posY==player2.posY))
         {
-            cout << (i%2 == 0 ? KTokenPlayer1 : KTokenPlayer2) << " a gagne !" << endl;
+            cout << (i%2 == 0 ? player1.token : player2.token) << " a gagne !" << endl;
             return 0;
         }
     }
