@@ -166,11 +166,11 @@ int ppal ()
     SetPlayerColor(FirstPlayer, KRouge);
     SetPlayerColor(SecondPlayer, KBleu);
 
- 
+
     InitMat(Map, KSizeX, KSizeY, FirstPlayer, SecondPlayer);
     ShowMatrix(Map, FirstPlayer, SecondPlayer);
 
-    cout << FirstPlayer.token << " commence et chasse " << SecondPlayer.token << endl;
+    cout << FirstPlayer.token << " commeeence et chasse " << SecondPlayer.token << endl;
 
     for (unsigned i (0); i < NbRnds*2; ++i)
     {
@@ -187,10 +187,11 @@ int ppal ()
             cout << GetWinner(FirstPlayer, SecondPlayer, i) << " a gagne !" << endl;
             return 0;
         }
-        cout << "Egalite !" << endl;
-        return 0;
-
     }
+    cout << "Egalite !" << endl;
+    return 0;
+
+
 }
 
 int main()
