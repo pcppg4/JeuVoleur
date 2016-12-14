@@ -29,8 +29,6 @@ typedef struct {
 typedef struct {
     unsigned posX;
     unsigned posY;
-    unsigned sizeX;
-    unsigned sizeY;
     char token;
     string color;
 } Obstacle;
@@ -174,44 +172,67 @@ bool CheckIfWin(Player & FirstPlayer, Player & SecondPlayer)
              (SecondPlayer.posY + SecondPlayer.sizeY - 1 < FirstPlayer.posY));
 }
 
+char GetWinner(Player& FirstPlayer, Player &SecondPlayer, const unsigned & NbrTour){
+    return (NbrTour%2 == 0 ? FirstPlayer.token : SecondPlayer.token);
+}
+
 Player InitPlayer(const unsigned  largeur, const unsigned  hauteur, const unsigned  AxeX, const unsigned  AxeY, const char  Token,  const string  Color){
     
-    Player tmpPlayer
+    Player tmpPlayer;
 
-    player.sizeX = largeur;
-    player.sizeY = hauteur;
-    player.posX = AxeX;
-    player.posY = AxeY;
-    player.token = Token;
-    player.color = Color;
+    tmpPlayer.sizeX = largeur;
+    tmpPlayer.sizeY = hauteur;
+    tmpPlayer.posX = AxeX;
+    tmpPlayer.posY = AxeY;
+    tmpPlayer.token = Token;
+    tmpPlayer.color = Color;
 
     return tmpPlayer;
 }
 
-Obstacle CreateObstacle(const unsigned largeur, const unsigned hauteur,const unsigned AxeX, const unsigned AxeY, const char Token, const string Color){
+int Randomize(int Min, int Max){
+    return rand()%(Max-Min) +Min;
+}
+
+Obstacle CreateObstacle(const unsigned AxeX, const unsigned AxeY, const char Token, const string Color){
 
     Obstacle tmpObstacle;
-
-    tmpObstacle.sizeX = largeur;
-    tmpObstacle.sizeY = hauteur;
+    
     tmpObstacle.posX = AxeX;
     tmpObstacle.posY = AxeY;
     tmpObstacle.token = Token;
     tmpObstacle.color = Color;
 
+
     return tmpObstacle;
 
 }
+
+bool CanMove(Player Joueur){
+
+}
+
+void PutObstacle(CMatrix & Matrice, Obstacle & obstacle){
+    Matrice[obstacle.posX][obstacle.posY] = obstacle.token;
+}
+
+void GenerateRandomObstacle(CMatrix & Matrice,  Obstacle & obstacle,  int TailleMax){
+    
+    Obstacle tmpObstacle = CreateObstacle(obstacle.posX, obstacle.posY, obstacle.token, obstacle.color);
+    for(unsigned i(0); i < TailleMax; ++i){
+        PutObstacle(Matrice, tmpObstacle);
+        tmpObstacle.posX += 1;
+        tmpObstacle.posY += 1;
+
+    }
+}
+
 
 unsigned AskTourMax(){
     unsigned NbRnds;
     cout << "Entrez le nombre de rounds" << endl;
     cin >> NbRnds;
     return NbRnds;
-}
-
-char GetWinner(Player& FirstPlayer, Player &SecondPlayer, const unsigned & NbrTour){
-    return (NbrTour%2 == 0 ? FirstPlayer.token : SecondPlayer.token);
 }
 
 int ppal ()
@@ -228,9 +249,11 @@ int ppal ()
 
     Player FirstPlayer = InitPlayer( 1, 1, 0, 0, 'X', KRouge);
     Player SecondPlayer = InitPlayer(1, 1, KSizeX - 1, KSizeY - 1, 'Y', KBleu);
-
-    Obstacle FirstObstacle = CreateObstacle(2, 2, 8, 4, 'u', KMAgenta);
     
+    Obstacle FirstObstacle = CreateObstacle(5, 5, '|', KMAgenta);
+    GenerateRandomObstacle(Map, FirstObstacle, 3);
+
+
     //Création de la matrice
     InitMat(Map, KSizeX, KSizeY, FirstPlayer, SecondPlayer);
 
@@ -243,19 +266,21 @@ int ppal ()
     {
 
         ShowMatrix(Map, FirstPlayer, SecondPlayer);
-        cout << "Au tour de " << (i%2 == 0 ? FirstPlayer.token : SecondPlayer.token) << endl;
+        Player & actualPlayer = (i%2 == 0 ? FirstPlayer : SecondPlayer);
 
+        cout << "Au tour de " << actualPlayer.token << endl;
         cin >> EnteredKey;
 
-        MoveToken (Map, EnteredKey, (i%2 == 0 ? FirstPlayer : SecondPlayer));
+
+        if(CanMove(actualPlayer))   MoveToken(Map, EnteredKey, actualPlayer);
 
         if (CheckIfWin(FirstPlayer, SecondPlayer))
         {
-            cout << GetWinner(FirstPlayer, SecondPlayer, i) << " a gagne !" << endl;
+            cout << GetWinner(FirstPlayer, SecondPlayer, i) << " a gagné !" << endl;
             return 0;
         }
     }
-    cout << "Egalite !" << endl;
+    cout << "Egalité !" << endl;
     return 0;
 
 }
