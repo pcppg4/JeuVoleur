@@ -174,8 +174,10 @@ bool CheckIfWin(Player & FirstPlayer, Player & SecondPlayer)
              (SecondPlayer.posY + SecondPlayer.sizeY - 1 < FirstPlayer.posY));
 }
 
-void InitPlayer(Player & player, const unsigned & largeur, const unsigned & hauteur,const unsigned & AxeX, const unsigned & AxeY, const char & Token,  const string & Color){
+Player InitPlayer(const unsigned  largeur, const unsigned  hauteur, const unsigned  AxeX, const unsigned  AxeY, const char  Token,  const string  Color){
     
+    Player tmpPlayer
+
     player.sizeX = largeur;
     player.sizeY = hauteur;
     player.posX = AxeX;
@@ -183,18 +185,21 @@ void InitPlayer(Player & player, const unsigned & largeur, const unsigned & haut
     player.token = Token;
     player.color = Color;
 
-
+    return tmpPlayer;
 }
 
-void InitObstacle(Obstacle & obstacle, const unsigned & largeur, const unsigned & hauteur,const unsigned & AxeX, const unsigned & AxeY, const char & Token,  const string & Color){
-    
-    obstacle.sizeX = largeur;
-    obstacle.sizeY = hauteur;
-    obstacle.posX = AxeX;
-    obstacle.posY = AxeY;
-    obstacle.token = Token;
-    obstacle.color = Color;
+Obstacle CreateObstacle(const unsigned largeur, const unsigned hauteur,const unsigned AxeX, const unsigned AxeY, const char Token, const string Color){
 
+    Obstacle tmpObstacle;
+
+    tmpObstacle.sizeX = largeur;
+    tmpObstacle.sizeY = hauteur;
+    tmpObstacle.posX = AxeX;
+    tmpObstacle.posY = AxeY;
+    tmpObstacle.token = Token;
+    tmpObstacle.color = Color;
+
+    return tmpObstacle;
 
 }
 
@@ -209,26 +214,23 @@ char GetWinner(Player& FirstPlayer, Player &SecondPlayer, const unsigned & NbrTo
     return (NbrTour%2 == 0 ? FirstPlayer.token : SecondPlayer.token);
 }
 
-
-
 int ppal ()
 {
     // Taille matrice
-    const unsigned KSizeX (5);
-    const unsigned KSizeY (5);
+    const unsigned KSizeX (10);
+    const unsigned KSizeY (10);
 
     unsigned NbRnds = AskTourMax();
     char EnteredKey;
-    
-    //Joueurs & Matrice
-    Player FirstPlayer;
-    Player SecondPlayer;
-    CMatrix Map;
-    
-    //Création des joueurs
-    InitPlayer(FirstPlayer, 1, 1, 0, 0, 'X', KRouge);
-    InitPlayer(SecondPlayer, 1, 1, KSizeX - 1, KSizeY - 1, 'Y', KBleu);
 
+    //Joueurs & Matrice & Obstacles
+    CMatrix Map;
+
+    Player FirstPlayer = InitPlayer( 1, 1, 0, 0, 'X', KRouge);
+    Player SecondPlayer = InitPlayer(1, 1, KSizeX - 1, KSizeY - 1, 'Y', KBleu);
+
+    Obstacle FirstObstacle = CreateObstacle(2, 2, 8, 4, 'u', KMAgenta);
+    
     //Création de la matrice
     InitMat(Map, KSizeX, KSizeY, FirstPlayer, SecondPlayer);
 
