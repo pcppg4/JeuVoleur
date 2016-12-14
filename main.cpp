@@ -39,7 +39,7 @@ void ClearScreen ()
     cout << "\033[H\033[2J";
 }
 
-void ShowMatrix (const CMatrix & Mat)
+void ShowMatrix (const CMatrix & Mat,Player & player1, Player & player2)
 {
     ClearScreen();
     Couleur (KReset);
@@ -47,10 +47,10 @@ void ShowMatrix (const CMatrix & Mat)
     {
         for (char C : line)
         {
-            if (C == KTokenPlayer1) Couleur (KRouge);
-            if (C == KTokenPlayer2) Couleur (KBleu);
+            if (C == player1.token) Couleur (player1.color);
+            if (C == player2.token) Couleur (player2.color);
             cout << C;
-            if ((C == KTokenPlayer1)||(C == KTokenPlayer2)) Couleur (KReset);
+            if ((C == player1.token)||(C == player2.token)) Couleur (KReset);
         }
         cout << endl;
     }
@@ -114,20 +114,16 @@ int ppal ()
 {
     const unsigned KSizeX (5);
     const unsigned KSizeY (5);
-    Player P1, P2;
-    P1.posX = 0;
-    P1.posY = 0;
-    P2.posX = KSizeX-1;
-    P2.posY = KSizeY-1;
-    P1.token = 'X';
-    P2.token = 'O';
-    P1.color = KRouge;
-    P2.color = KBleu;
-
+    Player player1, player2;
+    player1.posX = 0;
+    player1.posY = 0;
+    player2.posX = KSizeX-1;
+    player2.posY = KSizeY-1;
+    player1.token = 'X';
+    player2.token = 'O';
+    player1.color = KRouge;
+    player2.color = KBleu;
     unsigned NbRnds;
-    CPosition pos1, pos2;
-    pos1.first = 0;
-    pos1.second = 0;
     cout << "Entrez le nombre de rounds" << endl;
     cin >> NbRnds;
     char Mv;
