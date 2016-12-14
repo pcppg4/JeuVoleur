@@ -1,6 +1,9 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <cstdlib>
+#include <ctime>
+
 using namespace std;
 
 namespace {
@@ -207,15 +210,15 @@ Obstacle CreateObstacle(const unsigned AxeX, const unsigned AxeY, const char Tok
     return tmpObstacle;
 
 }
-
+/* TODO ?
 bool CanMove(Player Joueur){
 
 }
-
+*/
 void PutObstacle(CMatrix & Matrice, Obstacle & obstacle){
-    Matrice[obstacle.posX][obstacle.posY] = obstacle.token;
+    Matrice[obstacle.posY][obstacle.posX] = obstacle.token;
 }
-
+/*
 void GenerateRandomObstacle(CMatrix & Matrice,  Obstacle & obstacle,  int TailleMax){
     
     Obstacle tmpObstacle = CreateObstacle(obstacle.posX, obstacle.posY, obstacle.token, obstacle.color);
@@ -226,7 +229,25 @@ void GenerateRandomObstacle(CMatrix & Matrice,  Obstacle & obstacle,  int Taille
 
     }
 }
+*/
 
+void GenerateRandomObstacles(CMatrix & Mat, const char & token, const string & coul,const unsigned & Nb)
+{
+    Obstacle obs;
+    obs.color = coul;
+    obs.token = token;
+    obs.posX = (unsigned) rand() % Mat[0].size();
+    obs.posY = (unsigned) rand() % Mat.size();
+    for (unsigned i (0); i<Nb; ++i)
+    {
+        do
+        {
+            obs.posX = (unsigned) rand() % Mat[0].size();
+            obs.posY = (unsigned) rand() % Mat.size();
+        } while (Mat[obs.posY][obs.posY] != KEmpty);
+        PutObstacle(Mat,obs);
+    }
+}
 
 unsigned AskTourMax(){
     unsigned NbRnds;
@@ -237,11 +258,12 @@ unsigned AskTourMax(){
 
 int ppal ()
 {
+    srand(time(0));
     // Taille matrice
     const unsigned KSizeX (10);
     const unsigned KSizeY (10);
 
-    unsigned NbRnds = AskTourMax();
+    unsigned NbRnds (AskTourMax());
     char EnteredKey;
 
     //Joueurs & Matrice & Obstacles
@@ -250,8 +272,7 @@ int ppal ()
     Player FirstPlayer = InitPlayer( 1, 1, 0, 0, 'X', KRouge);
     Player SecondPlayer = InitPlayer(1, 1, KSizeX - 1, KSizeY - 1, 'Y', KBleu);
     
-    Obstacle FirstObstacle = CreateObstacle(5, 5, '|', KMAgenta);
-    GenerateRandomObstacle(Map, FirstObstacle, 3);
+ //   Obstacle FirstObstacle = CreateObstacle(5, 5, '|', KMAgenta);
 
 
     //Création de la matrice
@@ -260,6 +281,7 @@ int ppal ()
     //Création des bonus
     PutBonus(Map,'B',2,2);
 
+    GenerateRandomObstacles(Map,'|',KMAgenta,10);
     ShowMatrix(Map, FirstPlayer, SecondPlayer);
 
     for (unsigned i (0); i < NbRnds*2; ++i)
@@ -272,7 +294,8 @@ int ppal ()
         cin >> EnteredKey;
 
 
-        if(CanMove(actualPlayer))   MoveToken(Map, EnteredKey, actualPlayer);
+        //if(CanMove(actualPlayer))
+        MoveToken(Map, EnteredKey, actualPlayer);
 
         if (CheckIfWin(FirstPlayer, SecondPlayer))
         {
